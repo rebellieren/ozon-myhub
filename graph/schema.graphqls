@@ -1,0 +1,42 @@
+type User{
+  id: ID!
+  nickname: String!
+}
+type Post{
+    id: ID!
+    title: String!
+    user: User!
+    userID: ID!
+    content: String!
+    comments(limit: Int = 10, offset: Int = 0): [Comment!]!
+    commentsAllowed: Boolean!
+}
+type Comment{
+    id: ID!
+    content: String!
+    userID: ID!
+    postId: ID!
+    user: User!
+    replies(limit: Int = 10, offset: Int = 0): [Comment!]! 
+}
+type PostPage {
+    posts: [Post!]!
+    totalCount: Int!
+    hasNextPage: Boolean!
+}
+type Query{
+    posts(limit: Int!, offset: Int!): PostPage!
+    post(id:ID!): Post
+    comments(limit: Int!, offset: Int!, postId: ID!): [Comment!]!
+    user(id: ID!): User 
+}
+type Mutation {
+  createPost(userId: ID!, title: String!, content: String!, commentsAllowed: Boolean!): Post!
+  createCommentForPost(userId: ID!, postId: ID!, content: String!): Comment!
+  createReplyForComment(userId: ID!, parentCommentId: ID!, content: String!): Comment!
+  toggleCommentsForPost(postId: ID!, userId: ID!): Post!
+
+}
+type Subscription {
+  newComment(postId: ID!, userId: ID!): Comment!
+}
